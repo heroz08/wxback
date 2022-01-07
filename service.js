@@ -46,4 +46,6 @@ _.get('/getDetail', async ctx => {
 
 
 app.use(_.routes())
-app.listen(8989)
+app.listen(8989,() => {
+    console.log('service start :8989')
+})
