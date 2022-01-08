@@ -1,6 +1,6 @@
 const documentPath = "/Volumes/ExFAT/exFat/wxbackup/Documents"
 // const mmsettingName = 'mmsettingext.archive'
-const webAssectPath = '/Users/hzhyang/WebstormProjects/wxback/front/src/accest'
+const webAssectPath = '/Volumes/ExFAT/exFat/wxback/assets'
 
 module.exports = {
     documentPath,

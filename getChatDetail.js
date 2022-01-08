@@ -52,6 +52,7 @@ async function getDataBySql(tempAccount, friendId, size, num){
         const filePath = path.join(baseDocumentPath, tempAccount, '/DB',dbName)
        return await openDB(filePath,name, tempAccount,friendId,size, num)
     }
+    return null;
 }
 
 async function openDB(filePath,name,tempAccount,friendId, size=10, num=1){
@@ -67,10 +68,9 @@ async function openDB(filePath,name,tempAccount,friendId, size=10, num=1){
             if(err) reject(err);
             const arr = []
             for(let i in rows) {
-                const {CreateTime, MesLocalID,Message,Type} = rows[i]
+                const {CreateTime, MesLocalID,Message,Type, Des} = rows[i]
                 const time = moment(CreateTime * 1000).format('YYYY-MM-DD-HH:mm:ss')
-                const formatMessage = format(tempAccount, friendId,Message, Type, MesLocalID, time)
-
+                const formatMessage = format(tempAccount, friendId,Message, Type, MesLocalID, time, Des)
                 arr.push({
                     time, formatMessage
                 })

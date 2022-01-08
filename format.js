@@ -1,8 +1,10 @@
 const path = require('path')
 const fs = require('fs')
 const {webAssectPath, documentPath} = require('./config')
-function format(tempAccount, name,Message, Type, MesLocalID,time ){
-    const message = {}
+function format(tempAccount, name,Message, Type, MesLocalID,time, Des ){
+    const message = {
+        des: Des
+    }
     message.result = Message;
     console.log(Type, typeof Type, Message)
     switch (Type) {
@@ -55,7 +57,7 @@ function format(tempAccount, name,Message, Type, MesLocalID,time ){
 function processImage(MesLocalID, time, tempAccount, name){
     const obj = {}
     const sourcePath = path.join(documentPath, tempAccount,'Img',name,MesLocalID+ '.pic')
-    const targetPath = path.join(webAssectPath, 'Img',time+'.jpg' )
+    const targetPath = path.join(webAssectPath, 'Img',name+'-'+time+'.jpg' )
     if (fs.existsSync(sourcePath)) {
         try {
             fs.copyFileSync(sourcePath, targetPath)
@@ -72,9 +74,9 @@ function processImage(MesLocalID, time, tempAccount, name){
 
 function processVideo (MesLocalID, time, tempAccount, name) {
     const thsourcePath = path.join(documentPath, tempAccount,'Video',name,MesLocalID + '.video_thum')
-    const thtargetPath = path.join(webAssectPath, 'Video',time+ '.jpg' )
+    const thtargetPath = path.join(webAssectPath, 'Video',name+'-'+time+ '.jpg' )
     const sourcePath = path.join(documentPath, tempAccount,'Video',name,MesLocalID +'.mp4')
-    const targetPath = path.join(webAssectPath, 'Video',time+'.mp4' )
+    const targetPath = path.join(webAssectPath, 'Video',name+'-'+time+'.mp4' )
     const obj = {
         thumPath: null,
         contentPath: null
@@ -112,7 +114,7 @@ function processAudio(MesLocalID, time, tempAccount, name){
     });
     if (stdOut.indexOf("[OK]") > 0) { // 存在OK,即转换成功
         const newPath = path.join(documentPath, tempAccount, 'Audio',name, MesLocalID+'.mp3')
-        const targetPath = path.join(webAssectPath, 'Audio',time+'.mp3' )
+        const targetPath = path.join(webAssectPath, 'Audio',name +'-'+time+'.mp3' )
         if (fs.existsSync(newPath)) {
             try {
                 fs.copyFileSync(newPath, targetPath)

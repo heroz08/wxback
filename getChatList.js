@@ -32,7 +32,19 @@ async function contactSql(contactSqlPath, size=10, num=1) {
             resolve(friends)
         })
     })
-    return await eachDb
+    const DbSum = new Promise((resolve, reject) => {
+        db.all(`select *,lower(quote(dbContactRemark)) as crmark from Friend ;`,(err, rows) => {
+            if(err) reject(err);
+            const friends = {};
+            const len = rows.length;
+            resolve(len)
+        })
+    })
+    const friends = await eachDb
+    const sum = await DbSum
+    return {
+        friends, sum
+    }
 }
 
 
