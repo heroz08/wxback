@@ -6,7 +6,7 @@ function format(tempAccount, name,Message, Type, MesLocalID,time, Des ){
         des: Des
     }
     message.result = Message;
-    console.log(Type, typeof Type, Message)
+    console.log(Message)
     switch (Type) {
         case 1:// 文字消息
             message.result = Message;
@@ -56,14 +56,23 @@ function format(tempAccount, name,Message, Type, MesLocalID,time, Des ){
 
 function processImage(MesLocalID, time, tempAccount, name){
     const obj = {}
+    const dirPath = path.join(path.resolve(__dirname, webAssectPath), 'Img')
     const sourcePath = path.join(documentPath, tempAccount,'Img',name,MesLocalID+ '.pic')
-    const targetPath = path.join(webAssectPath, 'Img',name+'-'+time+'.jpg' )
-    if (fs.existsSync(sourcePath)) {
-        try {
-            fs.copyFileSync(sourcePath, targetPath)
+    const targetPath = path.join(dirPath,name+'-'+time+'.jpg' )
+    if (fs.existsSync(sourcePath)) { // 源文件目录正确
+        if(!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath)
+        }
+        try{
+            fs.statSync(targetPath);
             obj.contentPath = targetPath;
-        }catch (e) {
-            console.log(e,1)
+        } catch (e) {
+            try {
+                fs.copyFileSync(sourcePath, targetPath)
+                obj.contentPath = targetPath;
+            }catch (e) {
+                console.log(e,1)
+            }
         }
     } else {
         return "[图片不存在]";
@@ -73,31 +82,49 @@ function processImage(MesLocalID, time, tempAccount, name){
 }
 
 function processVideo (MesLocalID, time, tempAccount, name) {
+    const dirPath = path.join(path.resolve(__dirname, webAssectPath), 'Video')
     const thsourcePath = path.join(documentPath, tempAccount,'Video',name,MesLocalID + '.video_thum')
-    const thtargetPath = path.join(webAssectPath, 'Video',name+'-'+time+ '.jpg' )
+    const thtargetPath = path.join(dirPath,name+'-'+time+ '.jpg' )
     const sourcePath = path.join(documentPath, tempAccount,'Video',name,MesLocalID +'.mp4')
-    const targetPath = path.join(webAssectPath, 'Video',name+'-'+time+'.mp4' )
+    const targetPath = path.join(dirPath,name+'-'+time+'.mp4' )
     const obj = {
         thumPath: null,
         contentPath: null
     }
     if (fs.existsSync(thsourcePath)) {
-        try {
-            fs.copyFileSync(thsourcePath, thtargetPath)
+        if(!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath)
+        }
+        try{
+            fs.statSync(thtargetPath)
             obj.thumPath = thtargetPath
         }catch (e) {
-            console.log(e,3)
+            try {
+                fs.copyFileSync(thsourcePath, thtargetPath)
+                obj.thumPath = thtargetPath
+            }catch (e) {
+                console.log(e,3)
+            }
         }
+
     } else {
         return  "[视频缩略图不存在]";
     }
 
     if (fs.existsSync(sourcePath)) {
-        try {
-            fs.copyFileSync(sourcePath, targetPath)
+        if(!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath)
+        }
+        try{
+            fs.statSync(targetPath)
             obj.contentPath = targetPath
-        }catch (e) {
-            console.log(e,3,3)
+        } catch (e) {
+            try {
+                fs.copyFileSync(sourcePath, targetPath)
+                obj.contentPath = targetPath
+            }catch (e) {
+                console.log(e,3,3)
+            }
         }
     } else {
         return "[视频不存在]";
@@ -107,25 +134,37 @@ function processVideo (MesLocalID, time, tempAccount, name) {
 
 function processAudio(MesLocalID, time, tempAccount, name){
     const obj = {}
-    const command = "sh " + './lib/silk-v3-decoder' + "/converter.sh " + documentPath + '/'+tempAccount + '/Audio/' + name+"/" +MesLocalID + ".aud mp3"
-    console.log(command,1)
-    const stdOut = require('child_process').execSync(command, {// child_process会调用sh命令，pc会调用cmd.exe命令
-        encoding: "utf8"
-    });
-    if (stdOut.indexOf("[OK]") > 0) { // 存在OK,即转换成功
-        const newPath = path.join(documentPath, tempAccount, 'Audio',name, MesLocalID+'.mp3')
-        const targetPath = path.join(webAssectPath, 'Audio',name +'-'+time+'.mp3' )
-        if (fs.existsSync(newPath)) {
-            try {
-                fs.copyFileSync(newPath, targetPath)
-                obj.contentPath = targetPath
-            }catch (e) {
-                console.log(e,4)
+    const dirPath = path.join(path.resolve(__dirname, webAssectPath), 'Audio')
+    const newPath = path.join(documentPath, tempAccount, 'Audio',name, MesLocalID+'.mp3')
+    const targetPath = path.join(dirPath,name +'-'+time+'.mp3' )
+    if(!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath)
+    }
+    try {
+        fs.statSync(targetPath)
+        obj.contentPath = targetPath
+    } catch (e) {
+        const command = "sh " + './lib/silk-v3-decoder' + "/converter.sh " + documentPath + '/'+tempAccount + '/Audio/' + name+"/" +MesLocalID + ".aud mp3"
+        const stdOut = require('child_process').execSync(command, {// child_process会调用sh命令，pc会调用cmd.exe命令
+            encoding: "utf8"
+        });
+
+        if (stdOut.indexOf("[OK]") > 0) { // 存在OK,即转换成功
+
+            if (fs.existsSync(newPath)) {
+                try {
+                    fs.copyFileSync(newPath, targetPath)
+                    obj.contentPath = targetPath
+                }catch (e) {
+                    console.log(e,4)
+                }
+            } else {
+                return "[视频不存在]";
             }
-        } else {
-            return "[视频不存在]";
         }
     }
+
+
     return obj;
 }
 

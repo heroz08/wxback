@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const {documentPath:baseDocumentPath,mmsettingName} = require('./config')
+const {documentPath:baseDocumentPath} = require('./config')
 
 // readAccount()
-module.exports = function readAccount(){
+module.exports = function readAccount(){ // 根据md5找到账户文件夹和对应的sql文件
     const accountList = []
     const dirList = fs.readdirSync(baseDocumentPath)
     const len = dirList.length;
