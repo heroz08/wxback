@@ -11,7 +11,7 @@ async function contactSql(contactSqlPath, size=10, num=1) {
     })
     const eachDb = new Promise((resolve, reject) => {
         // 查找朋友的信息
-        db.all(`select *,lower(quote(dbContactRemark)) as crmark from Friend limit ${size} offset ${size* (num-1)};`,(err, rows) => {
+        db.all(`select *,lower(quote(dbContactRemark)) as crmark from Friend where type > 6 and type != 256 limit ${size} offset ${size* (num-1)};`,(err, rows) => {
             if(err) reject(err);
             const friends = {};
             const len = rows.length;
@@ -34,7 +34,7 @@ async function contactSql(contactSqlPath, size=10, num=1) {
         })
     })
     const DbSum = new Promise((resolve, reject) => {
-        db.all(`select *,lower(quote(dbContactRemark)) as crmark from Friend ;`,(err, rows) => {
+        db.all(`select *,lower(quote(dbContactRemark)) as crmark from Friend where type > 6 and type != 256;`,(err, rows) => {
             if(err) reject(err)
             const len = rows.length;
             resolve(len)
